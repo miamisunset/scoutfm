@@ -1,18 +1,24 @@
 package tui
 
 import (
-	"gitlab.com/Synthwave/scoutfm/internal/fs"
+	"fmt"
+	"io/fs"
 	"strings"
 
 	tea "github.com/charmbracelet/bubbletea"
 	"gitlab.com/Synthwave/scoutfm/internal/tui/styles"
+
+	fz "gitlab.com/Synthwave/scoutfm/internal/fs"
 )
 
 type scout struct {
-	styles     *styles.Styles
-	termWidth  int
-	termHeight int
-	cwd        string // current working directory
+	styles       *styles.Styles
+	cursor       int
+	files        []fs.FileInfo
+	selectedFile map[int]struct{}
+	termWidth    int
+	termHeight   int
+	cwd          string // current working directory
 }
 
 func (s scout) Init() tea.Cmd {
@@ -25,7 +31,17 @@ func (s scout) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		switch msg.String() {
 		case "q":
 			return s, tea.Quit
+
+		case "up", "k":
+			if s.cursor > 0 {
+				s.cursor--
+			}
+		case "down", "j":
+			if s.cursor < len(s.files)-1 {
+				s.cursor++
+			}
 		}
+
 	}
 
 	return s, nil
@@ -37,16 +53,16 @@ func (s scout) headerView() string {
 
 func (s scout) fileBrowser() string {
 
-	fb := strings.Builder{}
+	fileList := ""
 
-	files := fs.ReadDir(s.cwd)
-	l := len(files) - 1
+	for i, file := range s.files {
+		cursor := " "
 
-	for i, f := range files {
-		fb.WriteString(f.Name())
-		if i < l {
-			fb.WriteRune('\n')
+		if s.cursor == i {
+			cursor = ">"
 		}
+
+		fileList += fmt.Sprintf("%s %s\n", cursor, file.Name())
 	}
 
 	return s.styles.App.
@@ -54,7 +70,7 @@ func (s scout) fileBrowser() string {
 		BorderForeground(s.styles.BorderColor).
 		Width(s.termWidth).
 		Height(s.termHeight).
-		Render(fb.String())
+		Render(fileList)
 }
 
 func (s scout) View() string {
@@ -71,5 +87,6 @@ func NewScout(cwd string, termWidth int, termHeight int) *scout {
 		cwd:        cwd,
 		termWidth:  termWidth - 2,
 		termHeight: termHeight - 3,
+		files:      fz.ReadDir(cwd),
 	}
 }
