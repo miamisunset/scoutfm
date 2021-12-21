@@ -24,3 +24,9 @@ func SortByName(files []fs.FileInfo, desc bool) {
 		return files[i].Name() > files[j].Name()
 	})
 }
+
+func SortDirFirst(files []fs.FileInfo) {
+	sort.Slice(files, func(i, _ int) bool {
+		return files[i].IsDir()
+	})
+}
