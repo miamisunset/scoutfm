@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io/fs"
 	"strings"
+	"time"
 
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
@@ -49,13 +50,19 @@ func (s scout) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 }
 
 func (s scout) headerView() string {
-	header := s.styles.Header.Render("PATH")
-	cwd := s.styles.App.Render(s.cwd)
+	w := lipgloss.Width
+
+	header := s.styles.Header.Render("CWD")
+	clock := s.styles.Clock.Render(time.Now().Format("⏰ 15:04:05 am"))
+
+	cwd := s.styles.CurrentPath.Width(s.termWidth + 2 - w(header) - w(clock)).
+		Render(s.cwd)
 
 	headerBar := lipgloss.JoinHorizontal(
 		lipgloss.Top,
 		header,
 		cwd,
+		clock,
 	)
 
 	return headerBar
