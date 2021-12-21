@@ -1,4 +1,4 @@
-package main
+package colors
 
 const (
 	Red    string = "#cc241d"

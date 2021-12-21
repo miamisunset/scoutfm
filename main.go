@@ -10,6 +10,8 @@ import (
 
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
+
+	"gitlab.com/Synthwave/scoutfm/internal/tui/colors"
 )
 
 type Styles struct {
@@ -24,7 +26,7 @@ func DefaultStyles() *Styles {
 	s.App = lipgloss.NewStyle()
 
 	s.FileBrowserBorder = lipgloss.RoundedBorder()
-	s.BorderColor = Green
+	s.BorderColor = colors.Green
 
 	return s
 }
