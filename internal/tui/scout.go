@@ -10,7 +10,6 @@ import (
 	"gitlab.com/Synthwave/scoutfm/internal/tui/styles"
 
 	fz "gitlab.com/Synthwave/scoutfm/internal/fs"
-	"gitlab.com/Synthwave/scoutfm/internal/tui/colors"
 )
 
 type scout struct {
@@ -60,21 +59,29 @@ func (s scout) fileBrowser() string {
 	for i, file := range s.files {
 		cursor := " "
 
+		filename := file.Name()
+
 		if s.cursor == i {
 			cursor = ">"
 
 			sb := strings.Builder{}
 			sb.WriteString(cursor)
 			sb.WriteRune(' ')
-			sb.WriteString(file.Name())
+			sb.WriteString(filename)
 
 			selected := s.styles.App.
-				Foreground(lipgloss.Color(colors.Aqua)).
+				Foreground(lipgloss.Color("#14F9D5")).
 				Render(sb.String())
 
 			fileList += fmt.Sprintf("%s\n", selected)
 		} else {
-			fileList += fmt.Sprintf("%s %s\n", cursor, file.Name())
+			if file.IsDir() {
+				filename = s.styles.App.
+					Foreground(lipgloss.Color("#F25D94")).
+					Render(file.Name())
+			}
+
+			fileList += fmt.Sprintf("%s %s\n", cursor, filename)
 		}
 	}
 
