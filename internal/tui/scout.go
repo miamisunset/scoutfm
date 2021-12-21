@@ -24,7 +24,7 @@ type scout struct {
 }
 
 func (s scout) Init() tea.Cmd {
-	return nil
+	return tea.Batch(tick())
 }
 
 func (s scout) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
@@ -43,7 +43,8 @@ func (s scout) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				s.cursor++
 			}
 		}
-
+	case tickMsg:
+		return s, tick()
 	}
 
 	return s, nil
@@ -53,7 +54,7 @@ func (s scout) headerView() string {
 	w := lipgloss.Width
 
 	header := s.styles.Header.Render("CWD")
-	clock := s.styles.Clock.Render(time.Now().Format("⏰ 15:04:05 am"))
+	clock := s.styles.Clock.Render(time.Now().Format("⏰ 3:04:05 pm"))
 
 	cwd := s.styles.CurrentPath.Width(s.termWidth + 2 - w(header) - w(clock)).
 		Render(s.cwd)
@@ -125,4 +126,12 @@ func NewScout(cwd string, termWidth int, termHeight int) *scout {
 		termHeight: termHeight - 3,
 		files:      fz.ReadDir(cwd),
 	}
+}
+
+type tickMsg time.Time
+
+func tick() tea.Cmd {
+	return tea.Tick(time.Second, func(t time.Time) tea.Msg {
+		return tickMsg(t)
+	})
 }

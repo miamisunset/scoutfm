@@ -36,7 +36,7 @@ func DefaultStyles() *Styles {
 	s.Clock = lipgloss.NewStyle().
 		Inherit(s.CurrentPath).
 		Background(lipgloss.Color("#6124DF")).
-		Padding(0, 1).
+		Padding(0, 2).
 		MarginLeft(1)
 
 	s.BorderColor = "#874BFD"
