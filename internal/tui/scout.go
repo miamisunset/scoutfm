@@ -6,9 +6,11 @@ import (
 	"strings"
 
 	tea "github.com/charmbracelet/bubbletea"
+	"github.com/charmbracelet/lipgloss"
 	"gitlab.com/Synthwave/scoutfm/internal/tui/styles"
 
 	fz "gitlab.com/Synthwave/scoutfm/internal/fs"
+	"gitlab.com/Synthwave/scoutfm/internal/tui/colors"
 )
 
 type scout struct {
@@ -53,16 +55,27 @@ func (s scout) headerView() string {
 
 func (s scout) fileBrowser() string {
 
-	fileList := ""
+	var fileList string
 
 	for i, file := range s.files {
 		cursor := " "
 
 		if s.cursor == i {
 			cursor = ">"
-		}
 
-		fileList += fmt.Sprintf("%s %s\n", cursor, file.Name())
+			sb := strings.Builder{}
+			sb.WriteString(cursor)
+			sb.WriteRune(' ')
+			sb.WriteString(file.Name())
+
+			selected := s.styles.App.
+				Foreground(lipgloss.Color(colors.Aqua)).
+				Render(sb.String())
+
+			fileList += fmt.Sprintf("%s\n", selected)
+		} else {
+			fileList += fmt.Sprintf("%s %s\n", cursor, file.Name())
+		}
 	}
 
 	return s.styles.App.
