@@ -30,10 +30,10 @@ func DefaultStyles() *Styles {
 }
 
 type scout struct {
-	styles    *Styles
-	termWidth int
-	cwd       string // current working directory
-	browser   tea.Model
+	styles     *Styles
+	termWidth  int
+	termHeight int
+	cwd        string // current working directory
 }
 
 func (s scout) Init() tea.Cmd {
@@ -58,18 +58,24 @@ func (s scout) headerView() string {
 
 func (s scout) fileBrowser() string {
 
-	files := strings.Builder{}
+	fb := strings.Builder{}
 
-	for _, f := range readDir(s.cwd) {
-		files.WriteString(f.Name())
-		files.WriteRune('\n')
+	files := readDir(s.cwd)
+	l := len(files) - 1
+
+	for i, f := range files {
+		fb.WriteString(f.Name())
+		if i < l {
+			fb.WriteRune('\n')
+		}
 	}
 
 	return s.styles.App.
 		BorderStyle(s.styles.FileBrowserBorder).
 		BorderForeground(s.styles.BorderColor).
 		Width(s.termWidth).
-		Render(files.String())
+		Height(s.termHeight).
+		Render(fb.String())
 }
 
 func (s scout) View() string {
@@ -80,11 +86,12 @@ func (s scout) View() string {
 	return s.styles.App.Render(b.String())
 }
 
-func NewScout(cwd string, termWidth int) *scout {
+func NewScout(cwd string, termWidth int, termHeight int) *scout {
 	return &scout{
-		styles:    DefaultStyles(),
-		cwd:       cwd,
-		termWidth: termWidth - 2,
+		styles:     DefaultStyles(),
+		cwd:        cwd,
+		termWidth:  termWidth - 2,
+		termHeight: termHeight - 3,
 	}
 }
 
@@ -97,14 +104,14 @@ func readDir(cwd string) []fs.FileInfo {
 }
 
 func main() {
-	tw, _, _ := term.GetSize(int(os.Stdout.Fd()))
+	twidth, theight, _ := term.GetSize(int(os.Stdout.Fd()))
 
 	cwd, err := os.Getwd()
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	p := tea.NewProgram(NewScout(cwd, tw), tea.WithAltScreen())
+	p := tea.NewProgram(NewScout(cwd, twidth, theight), tea.WithAltScreen())
 	if err := p.Start(); err != nil {
 		log.Fatal(err)
 	}
