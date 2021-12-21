@@ -2,6 +2,8 @@ package main
 
 import (
 	"golang.org/x/term"
+	"io/fs"
+	"io/ioutil"
 	"log"
 	"os"
 	"strings"
@@ -22,7 +24,7 @@ func DefaultStyles() *Styles {
 	s.App = lipgloss.NewStyle()
 
 	s.FileBrowserBorder = lipgloss.RoundedBorder()
-	s.BorderColor = "#874BFD"
+	s.BorderColor = Green
 
 	return s
 }
@@ -55,11 +57,19 @@ func (s scout) headerView() string {
 }
 
 func (s scout) fileBrowser() string {
+
+	files := strings.Builder{}
+
+	for _, f := range readDir(s.cwd) {
+		files.WriteString(f.Name())
+		files.WriteRune('\n')
+	}
+
 	return s.styles.App.
 		BorderStyle(s.styles.FileBrowserBorder).
 		BorderForeground(s.styles.BorderColor).
 		Width(s.termWidth).
-		Render("File1\nFile2\nFile3")
+		Render(files.String())
 }
 
 func (s scout) View() string {
@@ -76,6 +86,14 @@ func NewScout(cwd string, termWidth int) *scout {
 		cwd:       cwd,
 		termWidth: termWidth - 2,
 	}
+}
+
+func readDir(cwd string) []fs.FileInfo {
+	files, err := ioutil.ReadDir(cwd)
+	if err != nil {
+		log.Fatal(err)
+	}
+	return files
 }
 
 func main() {
