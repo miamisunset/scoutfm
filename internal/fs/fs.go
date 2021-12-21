@@ -7,6 +7,7 @@ import (
 	"sort"
 )
 
+// ReadDir reads a directory returns all files or horribly fails. Nothing special
 func ReadDir(cwd string) []fs.FileInfo {
 	files, err := ioutil.ReadDir(cwd)
 	if err != nil {
@@ -15,6 +16,8 @@ func ReadDir(cwd string) []fs.FileInfo {
 	return files
 }
 
+// SortByName takes a slice of files and a bool to indicate sorting order
+// descending or ascending, and returns same slice sorted by name.
 func SortByName(files []fs.FileInfo, desc bool) {
 	sort.Slice(files, func(i, j int) bool {
 		if desc {
@@ -25,6 +28,7 @@ func SortByName(files []fs.FileInfo, desc bool) {
 	})
 }
 
+// SortDirFirst returns file slice sorted, so directories appear first.
 func SortDirFirst(files []fs.FileInfo) {
 	sort.Slice(files, func(i, _ int) bool {
 		return files[i].IsDir()
