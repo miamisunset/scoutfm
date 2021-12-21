@@ -119,12 +119,15 @@ func (s scout) View() string {
 }
 
 func NewScout(cwd string, termWidth int, termHeight int) *scout {
+	files := fz.ReadDir(cwd)
+	fz.SortByName(files, false)
+
 	return &scout{
 		styles:     styles.DefaultStyles(),
 		cwd:        cwd,
 		termWidth:  termWidth - 2,
 		termHeight: termHeight - 3,
-		files:      fz.ReadDir(cwd),
+		files:      files,
 	}
 }
 

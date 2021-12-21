@@ -4,6 +4,7 @@ import (
 	"io/fs"
 	"io/ioutil"
 	"log"
+	"sort"
 )
 
 func ReadDir(cwd string) []fs.FileInfo {
@@ -12,4 +13,14 @@ func ReadDir(cwd string) []fs.FileInfo {
 		log.Fatal(err)
 	}
 	return files
+}
+
+func SortByName(files []fs.FileInfo, desc bool) {
+	sort.Slice(files, func(i, j int) bool {
+		if desc {
+			return files[i].Name() < files[j].Name()
+		}
+
+		return files[i].Name() > files[j].Name()
+	})
 }
