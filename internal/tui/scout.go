@@ -49,7 +49,16 @@ func (s scout) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 }
 
 func (s scout) headerView() string {
-	return s.cwd
+	header := s.styles.Header.Render("PATH")
+	cwd := s.styles.App.Render(s.cwd)
+
+	headerBar := lipgloss.JoinHorizontal(
+		lipgloss.Top,
+		header,
+		cwd,
+	)
+
+	return headerBar
 }
 
 func (s scout) fileBrowser() string {
