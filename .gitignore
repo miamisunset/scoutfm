@@ -1,0 +1,6 @@
+# IDE
+.vscide/
+.idea/
+
+# Windoze
+*.exe
