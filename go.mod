@@ -1,4 +1,4 @@
-module gitlab.com/Synthwave/scoutfm
+module github.com/miamisunset/scoutfm
 
 go 1.17
 

@@ -8,9 +8,9 @@ import (
 
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
-	"gitlab.com/Synthwave/scoutfm/internal/tui/styles"
+	"github.com/miamisunset/scoutfm/internal/tui/styles"
 
-	fz "gitlab.com/Synthwave/scoutfm/internal/fs"
+	fz "github.com/miamisunset/scoutfm/internal/fs"
 )
 
 type scout struct {

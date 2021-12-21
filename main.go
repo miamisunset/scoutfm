@@ -6,7 +6,7 @@ import (
 	"os"
 
 	tea "github.com/charmbracelet/bubbletea"
-	"gitlab.com/Synthwave/scoutfm/internal/tui"
+	"github.com/miamisunset/scoutfm/internal/tui"
 )
 
 func main() {
