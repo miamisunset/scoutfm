@@ -92,6 +92,7 @@ func (s scout) View() string {
 	)
 
 	b := strings.Builder{}
+	b.WriteRune('\n')
 	b.WriteString(s.headerView())
 	b.WriteRune('\n')
 	b.WriteString(p)

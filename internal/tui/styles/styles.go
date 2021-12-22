@@ -22,24 +22,24 @@ func DefaultStyles() *Styles {
 
 	s.App = lipgloss.NewStyle()
 
-	s.FileBrowserBorder = lipgloss.RoundedBorder()
+	s.FileBrowserBorder = lipgloss.HiddenBorder()
 
 	s.CurrentPath = lipgloss.NewStyle().
 		Background(lipgloss.Color("#353533")).
-		Padding(0, 1)
+		Padding(0, 2)
 
 	s.Header = lipgloss.NewStyle().
 		Inherit(s.CurrentPath).
 		Foreground(lipgloss.Color("#FFFDF5")).
 		Background(lipgloss.Color("#FF5F87")).
 		Padding(0, 1).
-		MarginRight(1)
+		MarginLeft(2)
 
 	s.Clock = lipgloss.NewStyle().
 		Inherit(s.CurrentPath).
 		Background(lipgloss.Color("#6124DF")).
 		Padding(0, 2).
-		MarginLeft(1)
+		MarginRight(3)
 
 	s.CwdFileBrowser = lipgloss.NewStyle().
 		Padding(0, 1)

@@ -59,7 +59,7 @@ func (c commonPane) fileBrowser() string {
 		filename := file.Name()
 
 		if c.Cursor == i {
-			cursor = ">"
+			cursor = "|"
 
 			sb := strings.Builder{}
 			sb.WriteString(cursor)
