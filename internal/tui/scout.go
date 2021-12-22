@@ -17,7 +17,8 @@ type scout struct {
 	styles *styles.Styles
 	cursor int
 
-	cwdFileBrowser panes.CwdPane
+	cwdFileBrowser panes.Cwd
+	preview        panes.Preview
 
 	width  int
 	height int
@@ -26,16 +27,15 @@ type scout struct {
 }
 
 func NewScout(cwd string) *scout {
-
 	w, h, _ := term.GetSize(int(os.Stdout.Fd()))
+
 	return &scout{
 		styles:         styles.DefaultStyles(),
 		cwdFileBrowser: panes.NewCwdPane(w, h),
-
-		cwd: cwd,
-
-		width:  w,
-		height: h - 3,
+		preview:        panes.NewPreview(w),
+		cwd:            cwd,
+		width:          w,
+		height:         h - 3,
 	}
 
 }
@@ -82,10 +82,19 @@ func (s scout) headerView() string {
 }
 
 func (s scout) View() string {
+	cwd := s.cwdFileBrowser.View()
+	pp := s.preview.View()
+
+	p := lipgloss.JoinHorizontal(
+		lipgloss.Top,
+		cwd,
+		pp,
+	)
+
 	b := strings.Builder{}
 	b.WriteString(s.headerView())
 	b.WriteRune('\n')
-	b.WriteString(s.cwdFileBrowser.View())
+	b.WriteString(p)
 	return s.styles.App.Render(b.String())
 }
 
