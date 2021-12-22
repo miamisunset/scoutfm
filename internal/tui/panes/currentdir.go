@@ -11,7 +11,6 @@ import (
 	"github.com/charmbracelet/lipgloss"
 
 	fz "github.com/miamisunset/scoutfm/internal/fs"
-	"github.com/miamisunset/scoutfm/internal/tui/styles"
 )
 
 const (
@@ -23,10 +22,7 @@ type SelectedFileMsg struct {
 }
 
 type CwdPane struct {
-	styles *styles.Styles
-
-	Width  int
-	Height int
+	commonPane
 
 	Cursor int
 
@@ -47,10 +43,10 @@ func NewCwdPane(width, height int) CwdPane {
 	fz.SortDirFirst(files)
 
 	return CwdPane{
-		styles: styles.DefaultStyles(),
-		Files:  files,
-
-		Width: w,
+		commonPane:   newCommonPane(w),
+		Cursor:       0,
+		Files:        files,
+		SelectedFile: 0,
 	}
 }
 
