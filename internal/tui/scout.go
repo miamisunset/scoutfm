@@ -1,8 +1,8 @@
 package tui
 
 import (
-	"fmt"
-	"io/fs"
+	"golang.org/x/term"
+	"os"
 	"strings"
 	"time"
 
@@ -10,17 +10,34 @@ import (
 	"github.com/charmbracelet/lipgloss"
 	"github.com/miamisunset/scoutfm/internal/tui/styles"
 
-	fz "github.com/miamisunset/scoutfm/internal/fs"
+	"github.com/miamisunset/scoutfm/internal/tui/panes"
 )
 
 type scout struct {
-	styles       *styles.Styles
-	cursor       int
-	files        []fs.FileInfo
-	selectedFile map[int]struct{}
-	termWidth    int
-	termHeight   int
-	cwd          string // current working directory
+	styles *styles.Styles
+	cursor int
+
+	cwdFileBrowser panes.CwdPane
+
+	width  int
+	height int
+
+	cwd string // current working directory
+}
+
+func NewScout(cwd string) *scout {
+
+	w, h, _ := term.GetSize(int(os.Stdout.Fd()))
+	return &scout{
+		styles:         styles.DefaultStyles(),
+		cwdFileBrowser: panes.NewCwdPane(w, h),
+
+		cwd: cwd,
+
+		width:  w,
+		height: h - 3,
+	}
+
 }
 
 func (s scout) Init() tea.Cmd {
@@ -30,22 +47,17 @@ func (s scout) Init() tea.Cmd {
 func (s scout) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
+
 		switch msg.String() {
 		case "q":
 			return s, tea.Quit
-
-		case "up", "k":
-			if s.cursor > 0 {
-				s.cursor--
-			}
-		case "down", "j":
-			if s.cursor < len(s.files)-1 {
-				s.cursor++
-			}
 		}
+
 	case tickMsg:
 		return s, tick()
 	}
+
+	s.cwdFileBrowser.Update(msg)
 
 	return s, nil
 }
@@ -56,7 +68,7 @@ func (s scout) headerView() string {
 	header := s.styles.Header.Render("CWD")
 	clock := s.styles.Clock.Render(time.Now().Format("⏰ 3:04:05 pm"))
 
-	cwd := s.styles.CurrentPath.Width(s.termWidth + 2 - w(header) - w(clock)).
+	cwd := s.styles.CurrentPath.Width(s.width + 2 - w(header) - w(clock)).
 		Render(s.cwd)
 
 	headerBar := lipgloss.JoinHorizontal(
@@ -69,67 +81,12 @@ func (s scout) headerView() string {
 	return headerBar
 }
 
-func (s scout) fileBrowser() string {
-
-	var fileList string
-
-	for i, file := range s.files {
-		cursor := " "
-
-		filename := file.Name()
-
-		if s.cursor == i {
-			cursor = ">"
-
-			sb := strings.Builder{}
-			sb.WriteString(cursor)
-			sb.WriteRune(' ')
-			sb.WriteString(filename)
-
-			selected := s.styles.App.
-				Foreground(lipgloss.Color("#14F9D5")).
-				Render(sb.String())
-
-			fileList += fmt.Sprintf("%s\n", selected)
-		} else {
-			if file.IsDir() {
-				filename = s.styles.App.
-					Foreground(lipgloss.Color("#F25D94")).
-					Render(file.Name())
-			}
-
-			fileList += fmt.Sprintf("%s %s\n", cursor, filename)
-		}
-	}
-
-	return s.styles.App.
-		BorderStyle(s.styles.FileBrowserBorder).
-		BorderForeground(s.styles.BorderColor).
-		Width(s.termWidth).
-		Height(s.termHeight).
-		Render(fileList)
-}
-
 func (s scout) View() string {
 	b := strings.Builder{}
 	b.WriteString(s.headerView())
 	b.WriteRune('\n')
-	b.WriteString(s.fileBrowser())
+	b.WriteString(s.cwdFileBrowser.View())
 	return s.styles.App.Render(b.String())
-}
-
-func NewScout(cwd string, termWidth int, termHeight int) *scout {
-	files := fz.ReadDir(cwd)
-	fz.SortByName(files, true)
-	fz.SortDirFirst(files)
-
-	return &scout{
-		styles:     styles.DefaultStyles(),
-		cwd:        cwd,
-		termWidth:  termWidth - 2,
-		termHeight: termHeight - 3,
-		files:      files,
-	}
 }
 
 type tickMsg time.Time

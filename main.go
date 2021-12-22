@@ -1,7 +1,6 @@
 package main
 
 import (
-	"golang.org/x/term"
 	"log"
 	"os"
 
@@ -10,14 +9,13 @@ import (
 )
 
 func main() {
-	twidth, theight, _ := term.GetSize(int(os.Stdout.Fd()))
 
 	cwd, err := os.Getwd()
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	p := tea.NewProgram(tui.NewScout(cwd, twidth, theight), tea.WithAltScreen())
+	p := tea.NewProgram(tui.NewScout(cwd), tea.WithAltScreen())
 	if err := p.Start(); err != nil {
 		log.Fatal(err)
 	}

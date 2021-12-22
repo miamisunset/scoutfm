@@ -12,6 +12,8 @@ type Styles struct {
 	Clock       lipgloss.Style
 	CurrentPath lipgloss.Style
 
+	CwdFileBrowser lipgloss.Style
+
 	BorderColor lipgloss.Color
 }
 
@@ -38,6 +40,9 @@ func DefaultStyles() *Styles {
 		Background(lipgloss.Color("#6124DF")).
 		Padding(0, 2).
 		MarginLeft(1)
+
+	s.CwdFileBrowser = lipgloss.NewStyle().
+		Padding(0, 1)
 
 	s.BorderColor = "#874BFD"
 
