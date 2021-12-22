@@ -1,9 +1,12 @@
 package panes
 
 import (
-	tea "github.com/charmbracelet/bubbletea"
 	"io/ioutil"
+	"net/http"
+	"os"
 	"path"
+
+	tea "github.com/charmbracelet/bubbletea"
 )
 
 type Preview struct {
@@ -35,7 +38,6 @@ func (p *Preview) Update(msg tea.Msg) (*Preview, tea.Cmd) {
 func (p *Preview) readFile() {
 	if p.selectedFile.IsDir() {
 		files, err := ioutil.ReadDir(path.Join(p.currentDir, p.selectedFile.Name()))
-
 		if err != nil {
 			p.err = err
 			return
@@ -44,5 +46,20 @@ func (p *Preview) readFile() {
 		p.Files = files
 	} else {
 		p.Files = nil
+		p.getContentType()
 	}
+}
+
+func (p *Preview) getContentType() {
+	f, _ := os.Open(path.Join(p.currentDir, p.selectedFile.Name()))
+	defer f.Close()
+
+	buf := make([]byte, 512)
+
+	_, err := f.Read(buf)
+	if err != nil {
+		p.err = err
+	}
+
+	p.contentType = http.DetectContentType(buf)
 }

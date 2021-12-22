@@ -29,6 +29,7 @@ type commonPane struct {
 	Files        []fs.FileInfo
 	selectedFile fs.FileInfo
 	currentDir   string
+	contentType  string
 }
 
 func newCommonPane(width int, browse bool) commonPane {
@@ -93,7 +94,7 @@ func (c commonPane) fileBrowser() string {
 	}
 
 	if c.Files == nil {
-		return "TODO!"
+		return c.contentType
 	}
 
 	return c.styles.App.
