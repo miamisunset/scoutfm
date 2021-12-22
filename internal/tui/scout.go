@@ -14,16 +14,13 @@ import (
 )
 
 type scout struct {
-	styles *styles.Styles
-	cursor int
-
+	styles         *styles.Styles
+	cursor         int
 	cwdFileBrowser panes.Cwd
 	preview        panes.Preview
-
-	width  int
-	height int
-
-	cwd string // current working directory
+	width          int
+	height         int
+	cwd            string // current working directory
 }
 
 func NewScout(cwd string) *scout {
@@ -45,6 +42,8 @@ func (s scout) Init() tea.Cmd {
 }
 
 func (s scout) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+	var cmds []tea.Cmd
+
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
 
@@ -57,9 +56,12 @@ func (s scout) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		return s, tick()
 	}
 
-	s.cwdFileBrowser.Update(msg)
+	_, cmd := s.cwdFileBrowser.Update(msg)
+	cmds = append(cmds, cmd)
 
-	return s, nil
+	s.preview.Update(msg)
+
+	return s, tea.Batch(cmds...)
 }
 
 func (s scout) headerView() string {

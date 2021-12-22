@@ -2,29 +2,36 @@ package panes
 
 import (
 	"fmt"
-	"github.com/charmbracelet/lipgloss"
 	"io/fs"
 	"log"
 	"os"
 	"strings"
 
-	"github.com/miamisunset/scoutfm/internal/tui/styles"
+	"github.com/charmbracelet/lipgloss"
 
 	fz "github.com/miamisunset/scoutfm/internal/fs"
+	"github.com/miamisunset/scoutfm/internal/tui/styles"
 )
 
-type commonPane struct {
-	styles *styles.Styles
+// Pane messages
 
-	Width  int
-	Height int
-
-	Cursor int
-
-	Files []fs.FileInfo
+type fileMsg struct {
+	cwd  string
+	file fs.FileInfo
 }
 
-func newCommonPane(width int) commonPane {
+type commonPane struct {
+	styles       *styles.Styles
+	Width        int
+	Height       int
+	Cursor       int
+	Browsable    bool
+	Files        []fs.FileInfo
+	selectedFile fs.FileInfo
+	currentDir   string
+}
+
+func newCommonPane(width int, browse bool) commonPane {
 	cwd, err := os.Getwd()
 	if err != nil {
 		log.Fatal()
@@ -35,11 +42,14 @@ func newCommonPane(width int) commonPane {
 	fz.SortDirFirst(files)
 
 	return commonPane{
-		styles: styles.DefaultStyles(),
-		Width:  width,
-		Height: 0,
-		Cursor: 0,
-		Files:  files,
+		styles:       styles.DefaultStyles(),
+		Width:        width,
+		Height:       0,
+		Cursor:       0,
+		Files:        files,
+		Browsable:    browse,
+		currentDir:   cwd,
+		selectedFile: nil,
 	}
 }
 
@@ -58,7 +68,7 @@ func (c commonPane) fileBrowser() string {
 
 		filename := file.Name()
 
-		if c.Cursor == i {
+		if c.Cursor == i && c.Browsable {
 			cursor = "|"
 
 			sb := strings.Builder{}
@@ -80,6 +90,10 @@ func (c commonPane) fileBrowser() string {
 
 			fileList += fmt.Sprintf("%s %s\n", cursor, filename)
 		}
+	}
+
+	if c.Files == nil {
+		return "TODO!"
 	}
 
 	return c.styles.App.
