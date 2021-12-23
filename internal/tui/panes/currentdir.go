@@ -24,28 +24,32 @@ func NewCwdPane(width, height int) Cwd {
 	}
 }
 
-func (p *Cwd) Update(msg tea.Msg) (*Cwd, tea.Cmd) {
-	var cmds []tea.Cmd
+func (c Cwd) Init() tea.Cmd {
+	return c.sendSelectedFileMessage
+}
+
+func (c *Cwd) Update(msg tea.Msg) (*Cwd, tea.Cmd) {
+	var cmd tea.Cmd
 
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
 
 		switch msg.String() {
 		case "up", "k":
-			if p.Cursor > 0 {
-				p.Cursor--
-				cmds = append(cmds, p.sendSelectedFileMessage)
+			if c.Cursor > 0 {
+				c.Cursor--
+				cmd = c.sendSelectedFileMessage
 			}
 
 		case "down", "j":
-			if p.Cursor < len(p.Files)-1 {
-				p.Cursor++
-				cmds = append(cmds, p.sendSelectedFileMessage)
+			if c.Cursor < len(c.Files)-1 {
+				c.Cursor++
+				cmd = c.sendSelectedFileMessage
 			}
 		}
 	}
 
-	return p, tea.Batch(cmds...)
+	return c, cmd
 }
 
 func (c *Cwd) sendSelectedFileMessage() tea.Msg {

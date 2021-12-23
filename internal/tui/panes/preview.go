@@ -1,13 +1,14 @@
 package panes
 
 import (
-	fz "github.com/miamisunset/scoutfm/internal/fs"
 	"io/ioutil"
 	"net/http"
 	"os"
 	"path"
 
 	tea "github.com/charmbracelet/bubbletea"
+
+	fz "github.com/miamisunset/scoutfm/internal/fs"
 )
 
 type Preview struct {
@@ -56,6 +57,8 @@ func (p *Preview) readFile() {
 
 func (p *Preview) getContentType() {
 	f, _ := os.Open(path.Join(p.currentDir, p.selectedFile.Name()))
+
+	// TODO: error handling
 	defer f.Close()
 
 	buf := make([]byte, 512)
