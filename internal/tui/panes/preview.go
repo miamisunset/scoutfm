@@ -1,6 +1,7 @@
 package panes
 
 import (
+	fz "github.com/miamisunset/scoutfm/internal/fs"
 	"io/ioutil"
 	"net/http"
 	"os"
@@ -42,6 +43,9 @@ func (p *Preview) readFile() {
 			p.err = err
 			return
 		}
+
+		fz.SortByName(files, true)
+		fz.SortDirFirst(files)
 
 		p.Files = files
 	} else {
