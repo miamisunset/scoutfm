@@ -4,3 +4,9 @@
 
 # Windoze
 *.exe
+
+# asdf-vm
+.tool-versions
+
+# Binary
+scoutfm

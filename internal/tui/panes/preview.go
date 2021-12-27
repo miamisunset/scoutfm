@@ -2,11 +2,11 @@ package panes
 
 import (
 	"io/ioutil"
-	"net/http"
 	"os"
 	"path"
 
 	tea "github.com/charmbracelet/bubbletea"
+	"github.com/h2non/filetype"
 
 	fz "github.com/miamisunset/scoutfm/internal/fs"
 )
@@ -68,5 +68,11 @@ func (p *Preview) getContentType() {
 		p.err = err
 	}
 
-	p.contentType = http.DetectContentType(buf)
+	kind, _ := filetype.Match(buf)
+
+	if kind == filetype.Unknown {
+		p.contentType = "Unknown"
+	} else {
+		p.contentType = kind.MIME.Value
+	}
 }
