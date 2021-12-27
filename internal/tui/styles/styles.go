@@ -5,8 +5,9 @@ import (
 )
 
 type Styles struct {
-	App               lipgloss.Style
-	FileBrowserBorder lipgloss.Border
+	App                  lipgloss.Style
+	FileBrowserBorder    lipgloss.Border
+	PreviewBrowserBorder lipgloss.Border
 
 	Header      lipgloss.Style
 	Clock       lipgloss.Style
@@ -22,7 +23,9 @@ func DefaultStyles() *Styles {
 
 	s.App = lipgloss.NewStyle()
 
-	s.FileBrowserBorder = lipgloss.HiddenBorder()
+	s.FileBrowserBorder = lipgloss.RoundedBorder()
+
+	s.PreviewBrowserBorder = lipgloss.RoundedBorder()
 
 	s.CurrentPath = lipgloss.NewStyle().
 		Background(lipgloss.Color("#353533")).
@@ -44,7 +47,7 @@ func DefaultStyles() *Styles {
 	s.CwdFileBrowser = lipgloss.NewStyle().
 		Padding(0, 1)
 
-	s.BorderColor = "#874BFD"
+	s.BorderColor = "#353533"
 
 	return s
 }

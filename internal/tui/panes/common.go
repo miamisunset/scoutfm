@@ -32,7 +32,7 @@ type commonPane struct {
 	contentType  string
 }
 
-func newCommonPane(width int, browse bool) commonPane {
+func newCommonPane(width int, height int, browse bool) commonPane {
 	cwd, err := os.Getwd()
 	if err != nil {
 		log.Fatal()
@@ -45,7 +45,7 @@ func newCommonPane(width int, browse bool) commonPane {
 	return commonPane{
 		styles:       styles.DefaultStyles(),
 		Width:        width,
-		Height:       0,
+		Height:       height,
 		Cursor:       0,
 		Files:        files,
 		Browsable:    browse,
@@ -94,7 +94,12 @@ func (c commonPane) fileBrowser() string {
 	}
 
 	if c.Files == nil {
-		return c.contentType
+		return c.styles.App.
+			BorderStyle(c.styles.PreviewBrowserBorder).
+			BorderForeground(c.styles.BorderColor).
+			Width(c.Width).
+			Height(c.Height).
+			Render(c.contentType)
 	}
 
 	return c.styles.App.

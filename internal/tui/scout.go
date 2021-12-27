@@ -1,10 +1,11 @@
 package tui
 
 import (
-	"golang.org/x/term"
 	"os"
 	"strings"
 	"time"
+
+	"golang.org/x/term"
 
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
@@ -28,8 +29,8 @@ func NewScout(cwd string) *scout {
 
 	return &scout{
 		styles:         styles.DefaultStyles(),
-		cwdFileBrowser: panes.NewCwdPane(w, h),
-		preview:        panes.NewPreview(w),
+		cwdFileBrowser: panes.NewCwdPane(w, h-5),
+		preview:        panes.NewPreview(w, h-5),
 		cwd:            cwd,
 		width:          w,
 		height:         h - 3,

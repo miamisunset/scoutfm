@@ -20,7 +20,7 @@ func NewCwdPane(width, height int) Cwd {
 	w := int(float64(width) * cwdPaneMaxWidth)
 
 	return Cwd{
-		commonPane: newCommonPane(w, true),
+		commonPane: newCommonPane(w, height, true),
 	}
 }
 
