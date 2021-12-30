@@ -2,12 +2,13 @@ package tui
 
 import (
 	"fmt"
-	tea "github.com/charmbracelet/bubbletea"
-	"github.com/charmbracelet/lipgloss"
-	"github.com/miamisunset/scoutfm/util"
 	"io/fs"
 
+	tea "github.com/charmbracelet/bubbletea"
+	"github.com/charmbracelet/lipgloss"
+
 	"github.com/miamisunset/scoutfm/tui/styles"
+	"github.com/miamisunset/scoutfm/util"
 )
 
 type footer struct {
