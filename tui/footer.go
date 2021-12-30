@@ -71,7 +71,9 @@ func (f fileInfo) view() string {
 	if f.file != nil {
 		perm := fmt.Sprintf("%s", f.file.Mode().String())
 		uid, gid := util.GetFileOwner(f.file)
-		return f.style.Render(fmt.Sprintf("%s %s %s", perm, uid, gid))
+		mt := f.file.ModTime().Format("2006-01-02 3:04 pm")
+
+		return f.style.Render(fmt.Sprintf("%s %s %s %s", perm, uid, gid, mt))
 	}
 	return "none"
 }
