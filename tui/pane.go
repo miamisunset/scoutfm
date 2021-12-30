@@ -105,5 +105,5 @@ func (p pane) sendSelectedFile() tea.Msg {
 }
 
 func (p *pane) setWidth(w int) {
-	p.width = w - 2
+	p.width = w - p.style.GetBorderRightSize() - p.style.GetBorderLeftSize()
 }
