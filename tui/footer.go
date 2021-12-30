@@ -2,10 +2,10 @@ package tui
 
 import (
 	"fmt"
-	"io/fs"
-
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
+	"github.com/miamisunset/scoutfm/util"
+	"io/fs"
 
 	"github.com/miamisunset/scoutfm/tui/styles"
 )
@@ -48,7 +48,7 @@ func (f *footer) setWidth(w int) {
 }
 
 type fileInfo struct {
-	mode  fs.FileMode
+	file  fs.FileInfo
 	style *lipgloss.Style
 }
 
@@ -61,12 +61,17 @@ func newFileInfo(style styles.Style) *fileInfo {
 func (f *fileInfo) update(msg tea.Msg) (*fileInfo, tea.Cmd) {
 	switch msg := msg.(type) {
 	case selectedFileMsg:
-		f.mode = msg.file.Mode()
+		f.file = msg.file
 	}
 
 	return f, nil
 }
 
 func (f fileInfo) view() string {
-	return f.style.Render(fmt.Sprintf("%d", f.mode))
+	if f.file != nil {
+		perm := fmt.Sprintf("%s", f.file.Mode().String())
+		uid, gid := util.GetFileOwner(f.file)
+		return f.style.Render(fmt.Sprintf("%s %s %s", perm, uid, gid))
+	}
+	return "none"
 }
