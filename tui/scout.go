@@ -22,7 +22,7 @@ type scout struct {
 	footer  *footer
 }
 
-func NewScout(cwd string) *scout {
+func NewScout() *scout {
 	w, h, err := term.GetSize(int(os.Stdout.Fd()))
 
 	if err != nil {
@@ -32,15 +32,16 @@ func NewScout(cwd string) *scout {
 
 	s := styles.DefaultStyles()
 
-	widgetWidth := w - s.GetAppStyle().GetHorizontalMargins()
+	ww := w - s.GetAppStyle().GetHorizontalMargins()
+	ph := h - s.GetDir().GetVerticalMargins()
 
 	return &scout{
 		styles:  s,
 		width:   w,
 		height:  h,
-		header:  newHeader(widgetWidth, *s),
-		cwdPane: newPane(widgetWidth, *s),
-		footer:  newFooter(widgetWidth, *s),
+		header:  newHeader(ww, *s),
+		cwdPane: newPane(ww, ph, *s),
+		footer:  newFooter(ww, *s),
 	}
 }
 
@@ -59,9 +60,11 @@ func (s scout) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		s.height = msg.Height
 
 		w := msg.Width - s.styles.GetAppStyle().GetHorizontalMargins()
+		h := msg.Height - s.styles.GetAppStyle().GetVerticalMargins()
 
 		s.header.setWidth(w)
 		s.cwdPane.setWidth(w)
+		s.cwdPane.setHeight(h)
 		s.footer.setWidth(w)
 
 	case tickMsg:

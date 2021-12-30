@@ -9,7 +9,7 @@ import (
 )
 
 func main() {
-	p := tea.NewProgram(tui.NewScout("."), tea.WithAltScreen())
+	p := tea.NewProgram(tui.NewScout(), tea.WithAltScreen())
 	if err := p.Start(); err != nil {
 		log.Fatal(err)
 	}

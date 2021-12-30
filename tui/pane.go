@@ -16,18 +16,25 @@ import (
 type pane struct {
 	cursor   int
 	width    int
+	height   int
 	path     string
 	style    *lipgloss.Style
 	dirStyle *lipgloss.Style
 	files    []fs.FileInfo
 }
 
-func newPane(width int, style styles.Style) *pane {
+func newPane(width, height int, style styles.Style) *pane {
 	return &pane{
-		width:    width - 2,
+		width:    width,
+		height:   height - 6,
 		style:    style.GetPane(),
 		dirStyle: style.GetDir(),
 	}
+}
+
+func (p *pane) setHeight(h int) {
+	// FIXME: hard coding
+	p.height = h - 4
 }
 
 func (p *pane) update(msg tea.Msg) (*pane, tea.Cmd) {
@@ -85,7 +92,7 @@ func (p pane) view() string {
 		}
 	}
 
-	return p.style.Width(p.width).Render(l)
+	return p.style.Width(p.width).Height(p.height).Render(l)
 }
 
 func (p *pane) readDir() {
