@@ -1,6 +1,8 @@
 package tui
 
-import "os"
+import (
+	"io/fs"
+)
 
 // Pane messages
 type readDirMsg struct{ dir string }
@@ -10,10 +12,9 @@ func (m readDirMsg) getDir() string {
 }
 
 type selectedFileMsg struct {
-	name string
-	mode os.FileMode
+	file fs.FileInfo
 }
 
 func (s selectedFileMsg) getName() string {
-	return s.name
+	return s.file.Name()
 }

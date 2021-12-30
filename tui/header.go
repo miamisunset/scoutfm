@@ -2,12 +2,12 @@ package tui
 
 import (
 	"fmt"
-	tea "github.com/charmbracelet/bubbletea"
 	"os"
 	"os/user"
 	"strings"
 	"time"
 
+	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 
 	"github.com/miamisunset/scoutfm/tui/styles"
@@ -85,10 +85,6 @@ func newTitle(styles styles.Style) *title {
 	}
 }
 
-// func (t title) update(msg tea.Msg) (title, tea.Cmd) {
-// 	return t, nil
-// }
-
 func (t title) view() string {
 	return t.styles.Render(t.name)
 }
@@ -110,7 +106,7 @@ func newCwd(styles styles.Style) *cwd {
 func (c *cwd) update(msg tea.Msg) (*cwd, tea.Cmd) {
 	switch msg := msg.(type) {
 	case selectedFileMsg:
-		c.selectedFile = msg.name
+		c.selectedFile = msg.file.Name()
 	}
 
 	return c, nil
@@ -133,10 +129,6 @@ func newClock(styles styles.Style) *clock {
 	}
 }
 
-// func (c clock) update(msg tea.Msg) (clock, tea.Cmd) {
-// 	return c, nil
-// }
-
 func (c clock) view() string {
 	return c.styles.Render(time.Now().Format(c.format))
 }
@@ -154,10 +146,6 @@ func newWhoAmI(styles styles.Style) *whoAmI {
 		hostname: getHostname(),
 	}
 }
-
-// func (w whoAmI) update(msg tea.Msg) (whoAmI, tea.Cmd) {
-// 	return w, nil
-// }
 
 func (w whoAmI) view() string {
 	b := strings.Builder{}

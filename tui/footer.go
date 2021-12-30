@@ -61,7 +61,7 @@ func newFileInfo(style styles.Style) *fileInfo {
 func (f *fileInfo) update(msg tea.Msg) (*fileInfo, tea.Cmd) {
 	switch msg := msg.(type) {
 	case selectedFileMsg:
-		f.mode = msg.mode
+		f.mode = msg.file.Mode()
 	}
 
 	return f, nil

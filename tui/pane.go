@@ -2,13 +2,15 @@ package tui
 
 import (
 	"fmt"
-	tea "github.com/charmbracelet/bubbletea"
-	"github.com/charmbracelet/lipgloss"
-	"github.com/miamisunset/scoutfm/tui/styles"
 	"io/fs"
 	"io/ioutil"
 	"log"
 	"sort"
+
+	tea "github.com/charmbracelet/bubbletea"
+	"github.com/charmbracelet/lipgloss"
+
+	"github.com/miamisunset/scoutfm/tui/styles"
 )
 
 type pane struct {
@@ -100,8 +102,7 @@ func (p *pane) readDir() {
 
 func (p pane) sendSelectedFile() tea.Msg {
 	return selectedFileMsg{
-		name: p.files[p.cursor].Name(),
-		mode: p.files[p.cursor].Mode(),
+		file: p.files[p.cursor],
 	}
 }
 
