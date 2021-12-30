@@ -7,15 +7,17 @@ import (
 	"golang.org/x/term"
 
 	tea "github.com/charmbracelet/bubbletea"
+	"github.com/charmbracelet/lipgloss"
 
 	"github.com/miamisunset/scoutfm/tui/styles"
 )
 
 type scout struct {
-	styles *styles.Style
-	width  int
-	height int
-	header *header
+	styles  *styles.Style
+	width   int
+	height  int
+	header  *header
+	cwdPane *pane
 }
 
 func NewScout(cwd string) *scout {
@@ -29,10 +31,11 @@ func NewScout(cwd string) *scout {
 	styles := styles.DefaultStyles()
 
 	return &scout{
-		styles: styles,
-		width:  w,
-		height: h,
-		header: newHeader(w-styles.GetAppStyle().GetHorizontalMargins(), *styles),
+		styles:  styles,
+		width:   w,
+		height:  h,
+		header:  newHeader(w-styles.GetAppStyle().GetHorizontalMargins(), *styles),
+		cwdPane: newPane(*styles),
 	}
 }
 
@@ -61,5 +64,11 @@ func (s scout) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 }
 
 func (s scout) View() string {
-	return s.styles.GetAppStyle().Render(s.header.view())
+	layout := lipgloss.JoinVertical(
+		lipgloss.Top,
+		s.header.view(),
+		s.cwdPane.view(),
+	)
+
+	return s.styles.GetAppStyle().Render(layout)
 }
