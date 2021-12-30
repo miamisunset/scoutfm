@@ -51,6 +51,7 @@ func (p pane) update(msg tea.Msg) (pane, tea.Cmd) {
 func (p pane) view() string {
 	var l string
 
+	println("ok")
 	if p.files != nil {
 		for _, file := range p.files {
 			l += fmt.Sprintf("%s\n", file.Name())

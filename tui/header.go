@@ -83,9 +83,9 @@ func newTitle(styles styles.Style) *title {
 	}
 }
 
-func (t title) update(msg tea.Msg) (title, tea.Cmd) {
-	return t, nil
-}
+// func (t title) update(msg tea.Msg) (title, tea.Cmd) {
+// 	return t, nil
+// }
 
 func (t title) view() string {
 	return t.styles.Render(t.name)
