@@ -19,6 +19,7 @@ type scout struct {
 	height  int
 	header  *header
 	cwdPane *pane
+	footer  *footer
 }
 
 func NewScout(cwd string) *scout {
@@ -39,6 +40,7 @@ func NewScout(cwd string) *scout {
 		height:  h,
 		header:  newHeader(widgetWidth, *s),
 		cwdPane: newPane(widgetWidth, *s),
+		footer:  newFooter(widgetWidth, *s),
 	}
 }
 
@@ -60,6 +62,7 @@ func (s scout) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 		s.header.setWidth(w)
 		s.cwdPane.setWidth(w)
+		s.footer.setWidth(w)
 
 	case tickMsg:
 		return s, tick()
@@ -85,6 +88,7 @@ func (s scout) View() string {
 		lipgloss.Top,
 		s.header.view(),
 		s.cwdPane.view(),
+		s.footer.view(),
 	)
 
 	return s.styles.GetAppStyle().Render(layout)

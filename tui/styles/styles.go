@@ -11,6 +11,7 @@ type Style struct {
 	whoAmI lipgloss.Style
 	pane   lipgloss.Style
 	dir    lipgloss.Style
+	footer lipgloss.Style
 }
 
 func DefaultStyles() *Style {
@@ -51,6 +52,9 @@ func DefaultStyles() *Style {
 	s.dir = lipgloss.NewStyle().
 		Foreground(lipgloss.Color("#FF5F87"))
 
+	s.footer = lipgloss.NewStyle().
+		Inherit(s.header)
+
 	return s
 }
 
@@ -84,4 +88,8 @@ func (s Style) GetPane() *lipgloss.Style {
 
 func (s Style) GetDir() *lipgloss.Style {
 	return &s.dir
+}
+
+func (s Style) GetFooter() *lipgloss.Style {
+	return &s.footer
 }

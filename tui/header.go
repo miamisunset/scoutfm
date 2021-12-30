@@ -20,8 +20,6 @@ const (
 
 // Header
 type header struct {
-	style *lipgloss.Style
-
 	width  int
 	height int
 
@@ -29,6 +27,8 @@ type header struct {
 	whoAmI *whoAmI
 	cwd    *cwd
 	clock  *clock
+
+	style *lipgloss.Style
 }
 
 func newHeader(width int, styles styles.Style) *header {
