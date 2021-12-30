@@ -10,13 +10,6 @@ import (
 	"log"
 )
 
-// Pane messages
-type readDirMsg struct{ dir string }
-
-func (m readDirMsg) getDir() string {
-	return m.dir
-}
-
 type pane struct {
 	cursor int
 	style  *lipgloss.Style
@@ -43,10 +36,12 @@ func (p *pane) update(msg tea.Msg) (*pane, tea.Cmd) {
 		case "up", "k":
 			if p.cursor > 0 {
 				p.cursor--
+				cmd = p.sendSelectedFile
 			}
 		case "down", "j":
 			if p.cursor < len(p.files)-1 {
 				p.cursor++
+				cmd = p.sendSelectedFile
 			}
 		}
 	}
@@ -81,5 +76,11 @@ func (p *pane) readDir() {
 		log.Fatalln(err)
 	} else {
 		p.files = files
+	}
+}
+
+func (p pane) sendSelectedFile() tea.Msg {
+	return selectedFileMsg{
+		name: p.files[p.cursor].Name(),
 	}
 }

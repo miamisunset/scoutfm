@@ -45,6 +45,8 @@ func (s scout) Init() tea.Cmd {
 }
 
 func (s scout) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+	var cmds []tea.Cmd
+
 	switch msg := msg.(type) {
 
 	// When terminal size changes
@@ -65,8 +67,11 @@ func (s scout) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	}
 
 	_, cmd := s.cwdPane.update(msg)
+	cmds = append(cmds, cmd)
+	_, cmd = s.header.update(msg)
+	cmds = append(cmds, cmd)
 
-	return s, cmd
+	return s, tea.Batch(cmds...)
 }
 
 func (s scout) View() string {

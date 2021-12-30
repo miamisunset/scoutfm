@@ -1,6 +1,8 @@
 package tui
 
 import (
+	"fmt"
+	tea "github.com/charmbracelet/bubbletea"
 	"os"
 	"os/user"
 	"strings"
@@ -41,9 +43,10 @@ func newHeader(width int, styles styles.Style) *header {
 	}
 }
 
-// func (h header) update(msg tea.Msg) (header, tea.Cmd) {
-// 	return h, nil
-// }
+func (h header) update(msg tea.Msg) (header, tea.Cmd) {
+	h.cwd.update(msg)
+	return h, nil
+}
 
 func (h header) view() string {
 	width := lipgloss.Width
@@ -92,8 +95,9 @@ func (t title) view() string {
 
 // Current working directory
 type cwd struct {
-	styles *lipgloss.Style
-	dir    string
+	styles       *lipgloss.Style
+	dir          string
+	selectedFile string
 }
 
 func newCwd(styles styles.Style) *cwd {
@@ -103,12 +107,17 @@ func newCwd(styles styles.Style) *cwd {
 	}
 }
 
-// func (c cwd) update(msg tea.Msg) (cwd, tea.Cmd) {
-// 	return c, nil
-// }
+func (c *cwd) update(msg tea.Msg) (*cwd, tea.Cmd) {
+	switch msg := msg.(type) {
+	case selectedFileMsg:
+		c.selectedFile = msg.name
+	}
+
+	return c, nil
+}
 
 func (c cwd) view(width int) string {
-	return c.styles.Width(width).Render(c.dir)
+	return c.styles.Width(width).Render(fmt.Sprintf("%s/%s", c.dir, c.selectedFile))
 }
 
 // Clock
