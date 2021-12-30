@@ -85,7 +85,7 @@ func (s scout) View() string {
 }
 
 func (s *scout) setupCmd() tea.Msg {
-	return readDirMsg{dir: "/"}
+	return readDirMsg{dir: "."}
 }
 
 type tickMsg time.Time
