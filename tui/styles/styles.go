@@ -8,6 +8,7 @@ type Style struct {
 	title  lipgloss.Style
 	cwd    lipgloss.Style
 	clock  lipgloss.Style
+	whoAmI lipgloss.Style
 }
 
 func DefaultStyles() *Style {
@@ -26,14 +27,18 @@ func DefaultStyles() *Style {
 		Padding(0, 1)
 
 	s.cwd = lipgloss.NewStyle().
-		Inherit(s.header).
-		Padding(0, 1)
+		Inherit(s.header)
 
 	s.clock = lipgloss.NewStyle().
 		Inherit(s.header).
 		Background(lipgloss.Color("#6124DF")).
 		Padding(0, 1).
 		Align(lipgloss.Right)
+
+	s.whoAmI = lipgloss.NewStyle().
+		Inherit(s.header).
+		Foreground(lipgloss.Color("#ffe261")).
+		Padding(0, 1)
 
 	return s
 }
@@ -56,4 +61,8 @@ func (s Style) GetTitle() *lipgloss.Style {
 
 func (s Style) GetClock() *lipgloss.Style {
 	return &s.clock
+}
+
+func (s Style) GetWhoAmI() *lipgloss.Style {
+	return &s.whoAmI
 }

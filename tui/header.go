@@ -1,6 +1,10 @@
 package tui
 
 import (
+	"os"
+	"os/user"
+	"strings"
+
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 
@@ -19,9 +23,10 @@ type header struct {
 	width  int
 	height int
 
-	title *title
-	cwd   *cwd
-	clock *clock
+	title  *title
+	whoAmI *whoAmI
+	cwd    *cwd
+	clock  *clock
 }
 
 func newHeader(width int, styles styles.Style) *header {
@@ -30,6 +35,7 @@ func newHeader(width int, styles styles.Style) *header {
 		width:  width,
 		height: height,
 		title:  newTitle(styles),
+		whoAmI: newWhoAmI(styles),
 		cwd:    newCwd(styles),
 		clock:  newClock(styles),
 	}
@@ -43,12 +49,14 @@ func (h header) view() string {
 	width := lipgloss.Width
 
 	title := h.title.view()
+	whoAmI := h.whoAmI.view()
 	clock := h.clock.view()
-	cwd := h.cwd.view(h.width - width(title) - width(clock))
+	cwd := h.cwd.view(h.width - width(title) - width(whoAmI) - width(clock))
 
 	header := lipgloss.JoinHorizontal(
 		lipgloss.Top,
 		title,
+		whoAmI,
 		cwd,
 		clock,
 	)
@@ -122,4 +130,51 @@ func (c clock) update(msg tea.Msg) (clock, tea.Cmd) {
 
 func (c clock) view() string {
 	return c.styles.Render(c.name)
+}
+
+type whoAmI struct {
+	styles   *lipgloss.Style
+	username string
+	hostname string
+}
+
+func newWhoAmI(styles styles.Style) *whoAmI {
+	return &whoAmI{
+		styles:   styles.GetWhoAmI(),
+		username: getUsername(),
+		hostname: getHostname(),
+	}
+}
+
+func (w whoAmI) update(msg tea.Msg) (whoAmI, tea.Cmd) {
+	return w, nil
+}
+
+func (w whoAmI) view() string {
+	b := strings.Builder{}
+
+	b.WriteString(w.username)
+	b.WriteRune('@')
+	b.WriteString(w.hostname)
+
+	return w.styles.Render(b.String())
+}
+
+func getUsername() string {
+	user, err := user.Current()
+	if err != nil {
+		return "unknown"
+	}
+
+	return user.Username
+}
+
+func getHostname() string {
+	hostname, err := os.Hostname()
+
+	if err != nil {
+		return "unknown"
+	}
+
+	return hostname
 }
