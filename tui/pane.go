@@ -101,6 +101,7 @@ func (p *pane) readDir() {
 func (p pane) sendSelectedFile() tea.Msg {
 	return selectedFileMsg{
 		name: p.files[p.cursor].Name(),
+		mode: p.files[p.cursor].Mode(),
 	}
 }
 

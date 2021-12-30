@@ -79,6 +79,8 @@ func (s scout) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	cmds = append(cmds, cmd)
 	_, cmd = s.header.update(msg)
 	cmds = append(cmds, cmd)
+	_, cmd = s.footer.update(msg)
+	cmds = append(cmds, cmd)
 
 	return s, tea.Batch(cmds...)
 }

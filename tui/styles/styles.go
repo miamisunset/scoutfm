@@ -3,15 +3,16 @@ package styles
 import "github.com/charmbracelet/lipgloss"
 
 type Style struct {
-	app    lipgloss.Style
-	header lipgloss.Style
-	title  lipgloss.Style
-	cwd    lipgloss.Style
-	clock  lipgloss.Style
-	whoAmI lipgloss.Style
-	pane   lipgloss.Style
-	dir    lipgloss.Style
-	footer lipgloss.Style
+	app      lipgloss.Style
+	header   lipgloss.Style
+	title    lipgloss.Style
+	cwd      lipgloss.Style
+	clock    lipgloss.Style
+	whoAmI   lipgloss.Style
+	pane     lipgloss.Style
+	dir      lipgloss.Style
+	footer   lipgloss.Style
+	fileInfo lipgloss.Style
 }
 
 func DefaultStyles() *Style {
@@ -55,6 +56,13 @@ func DefaultStyles() *Style {
 	s.footer = lipgloss.NewStyle().
 		Inherit(s.header)
 
+	s.fileInfo = lipgloss.NewStyle().
+		Inherit(s.footer).
+		Foreground(lipgloss.Color("#000")).
+		Background(lipgloss.Color("#40b4c4")).
+		Padding(0, 1).
+		Align(lipgloss.Left)
+
 	return s
 }
 
@@ -92,4 +100,8 @@ func (s Style) GetDir() *lipgloss.Style {
 
 func (s Style) GetFooter() *lipgloss.Style {
 	return &s.footer
+}
+
+func (s Style) GetFileInfo() *lipgloss.Style {
+	return &s.fileInfo
 }
