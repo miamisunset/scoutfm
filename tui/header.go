@@ -6,7 +6,6 @@ import (
 	"strings"
 	"time"
 
-	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 
 	"github.com/miamisunset/scoutfm/tui/styles"
@@ -42,9 +41,9 @@ func newHeader(width int, styles styles.Style) *header {
 	}
 }
 
-func (h header) update(msg tea.Msg) (header, tea.Cmd) {
-	return h, nil
-}
+// func (h header) update(msg tea.Msg) (header, tea.Cmd) {
+// 	return h, nil
+// }
 
 func (h header) view() string {
 	width := lipgloss.Width
@@ -147,9 +146,9 @@ func newWhoAmI(styles styles.Style) *whoAmI {
 	}
 }
 
-func (w whoAmI) update(msg tea.Msg) (whoAmI, tea.Cmd) {
-	return w, nil
-}
+// func (w whoAmI) update(msg tea.Msg) (whoAmI, tea.Cmd) {
+// 	return w, nil
+// }
 
 func (w whoAmI) view() string {
 	b := strings.Builder{}
