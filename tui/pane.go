@@ -18,9 +18,10 @@ func (m readDirMsg) getDir() string {
 }
 
 type pane struct {
-	style *lipgloss.Style
-	path  string
-	files []fs.FileInfo
+	cursor int
+	style  *lipgloss.Style
+	path   string
+	files  []fs.FileInfo
 }
 
 func newPane(style styles.Style) *pane {
@@ -36,6 +37,18 @@ func (p *pane) update(msg tea.Msg) (*pane, tea.Cmd) {
 	case readDirMsg:
 		p.path = msg.getDir()
 		p.readDir()
+
+	case tea.KeyMsg:
+		switch msg.String() {
+		case "up", "k":
+			if p.cursor > 0 {
+				p.cursor--
+			}
+		case "down", "j":
+			if p.cursor < len(p.files)-1 {
+				p.cursor++
+			}
+		}
 	}
 
 	return p, cmd
@@ -47,9 +60,16 @@ func (p pane) view() string {
 	if p.path == "" {
 		l = "Empty"
 	} else {
+		var cursor string
 
-		for _, f := range p.files {
-			l += fmt.Sprintf("%s\n", f.Name())
+		for i, f := range p.files {
+			if p.cursor == i {
+				cursor = ">"
+			} else {
+				cursor = " "
+			}
+
+			l += fmt.Sprintf("%s %s\n", cursor, f.Name())
 		}
 	}
 
