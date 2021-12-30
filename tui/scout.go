@@ -29,14 +29,16 @@ func NewScout(cwd string) *scout {
 		os.Exit(1)
 	}
 
-	styles := styles.DefaultStyles()
+	s := styles.DefaultStyles()
+
+	widgetWidth := w - s.GetAppStyle().GetHorizontalMargins()
 
 	return &scout{
-		styles:  styles,
+		styles:  s,
 		width:   w,
 		height:  h,
-		header:  newHeader(w-styles.GetAppStyle().GetHorizontalMargins(), *styles),
-		cwdPane: newPane(*styles),
+		header:  newHeader(widgetWidth, *s),
+		cwdPane: newPane(widgetWidth, *s),
 	}
 }
 
@@ -53,7 +55,11 @@ func (s scout) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case tea.WindowSizeMsg:
 		s.width = msg.Width
 		s.height = msg.Height
-		s.header.setWidth(msg.Width - s.styles.GetAppStyle().GetHorizontalMargins())
+
+		w := msg.Width - s.styles.GetAppStyle().GetHorizontalMargins()
+
+		s.header.setWidth(w)
+		s.cwdPane.setWidth(w)
 
 	case tickMsg:
 		return s, tick()

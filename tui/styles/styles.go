@@ -45,7 +45,8 @@ func DefaultStyles() *Style {
 		Padding(0, 1)
 
 	s.pane = lipgloss.NewStyle().
-		MarginTop(1)
+		Border(lipgloss.RoundedBorder()).
+		BorderForeground(lipgloss.Color("#666"))
 
 	s.dir = lipgloss.NewStyle().
 		Foreground(lipgloss.Color("#FF5F87"))

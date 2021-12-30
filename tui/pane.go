@@ -8,18 +8,21 @@ import (
 	"io/fs"
 	"io/ioutil"
 	"log"
+	"sort"
 )
 
 type pane struct {
 	cursor   int
+	width    int
 	path     string
 	style    *lipgloss.Style
 	dirStyle *lipgloss.Style
 	files    []fs.FileInfo
 }
 
-func newPane(style styles.Style) *pane {
+func newPane(width int, style styles.Style) *pane {
 	return &pane{
+		width:    width - 2,
 		style:    style.GetPane(),
 		dirStyle: style.GetDir(),
 	}
@@ -71,22 +74,26 @@ func (p pane) view() string {
 			var filename string
 
 			if f.IsDir() {
-				filename = p.dirStyle.Render(f.Name())
+				filename = p.dirStyle.Render(fmt.Sprintf("🗀 %s", f.Name()))
 			} else {
-				filename = f.Name()
+				filename = fmt.Sprintf("🗋 %s", f.Name())
 			}
 
 			l += fmt.Sprintf("%s %s\n", cursor, filename)
 		}
 	}
 
-	return p.style.Render(l)
+	return p.style.Width(p.width).Render(l)
 }
 
 func (p *pane) readDir() {
 	if files, err := ioutil.ReadDir(p.path); err != nil {
 		log.Fatalln(err)
 	} else {
+		sort.Slice(files, func(i, _ int) bool {
+			return files[i].IsDir()
+		})
+
 		p.files = files
 	}
 }
@@ -95,4 +102,8 @@ func (p pane) sendSelectedFile() tea.Msg {
 	return selectedFileMsg{
 		name: p.files[p.cursor].Name(),
 	}
+}
+
+func (p *pane) setWidth(w int) {
+	p.width = w - 2
 }
