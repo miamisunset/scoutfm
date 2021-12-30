@@ -3,6 +3,7 @@ package tui
 import (
 	"fmt"
 	"os"
+	"time"
 
 	"golang.org/x/term"
 
@@ -40,7 +41,7 @@ func NewScout(cwd string) *scout {
 }
 
 func (s scout) Init() tea.Cmd {
-	return nil
+	return tea.Batch(tick(), s.setupCmd)
 }
 
 func (s scout) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
@@ -52,6 +53,9 @@ func (s scout) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		s.height = msg.Height
 		s.header.setWidth(msg.Width - s.styles.GetAppStyle().GetHorizontalMargins())
 
+	case tickMsg:
+		return s, tick()
+
 	// Shortcuts
 	case tea.KeyMsg:
 		switch msg.String() {
@@ -60,7 +64,9 @@ func (s scout) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		}
 	}
 
-	return s, nil
+	_, cmd := s.cwdPane.update(msg)
+
+	return s, cmd
 }
 
 func (s scout) View() string {
@@ -71,4 +77,16 @@ func (s scout) View() string {
 	)
 
 	return s.styles.GetAppStyle().Render(layout)
+}
+
+func (s *scout) setupCmd() tea.Msg {
+	return readDirMsg{dir: "/"}
+}
+
+type tickMsg time.Time
+
+func tick() tea.Cmd {
+	return tea.Tick(time.Second, func(t time.Time) tea.Msg {
+		return tickMsg(t)
+	})
 }

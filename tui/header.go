@@ -4,6 +4,7 @@ import (
 	"os"
 	"os/user"
 	"strings"
+	"time"
 
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
@@ -103,9 +104,9 @@ func newCwd(styles styles.Style) *cwd {
 	}
 }
 
-func (c cwd) update(msg tea.Msg) (cwd, tea.Cmd) {
-	return c, nil
-}
+// func (c cwd) update(msg tea.Msg) (cwd, tea.Cmd) {
+// 	return c, nil
+// }
 
 func (c cwd) view(width int) string {
 	return c.styles.Width(width).Render(c.dir)
@@ -114,22 +115,22 @@ func (c cwd) view(width int) string {
 // Clock
 type clock struct {
 	styles *lipgloss.Style
-	name   string
+	format string
 }
 
 func newClock(styles styles.Style) *clock {
 	return &clock{
 		styles: styles.GetClock(),
-		name:   "TIME",
+		format: "⏰ 3:04:05 pm",
 	}
 }
 
-func (c clock) update(msg tea.Msg) (clock, tea.Cmd) {
-	return c, nil
-}
+// func (c clock) update(msg tea.Msg) (clock, tea.Cmd) {
+// 	return c, nil
+// }
 
 func (c clock) view() string {
-	return c.styles.Render(c.name)
+	return c.styles.Render(time.Now().Format(c.format))
 }
 
 type whoAmI struct {
